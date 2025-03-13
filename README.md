@@ -36,4 +36,4 @@ This repository is about Using Python to Build a Semi-Supervised Model for Custo
 - Deploy the best model as an API using Flask or FastAPI.
 
 ## 📜 License
-This project is licensed under the **MIT License**.
+This project is open license.
