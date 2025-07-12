@@ -72,22 +72,70 @@ You can use a Jupyter Notebook or any Python editor to perform these tasks. The 
     * Use your trained Decision Tree model to predict the cluster for all employees in the dataset.
     * Create a final DataFrame that includes the original employee data, the K-Means cluster, and the predicted cluster.
 
-### Step 3: Data Visualization (Power BI)
+### Step 3: Data Visualization (using Python)
 
-1.  **Configure Power BI:**
-    * Open Power BI.
-    * Go to `File > Options and settings > Options`.
-    * Navigate to the `Python scripting` tab.
-    * Set the "Python home directory" to the Anaconda environment you created (e.g., `C:\Users\YourName\anaconda3\envs\performance-env`).
-2.  **Import Data using Python Script:**
-    * In Power BI, click `Get Data > Other > Python script`.
-    * Copy the entire Python code from your script (`.py` file) and paste it into the script window.
-    * **Important:** In the script, make sure the line that reads the Excel file points to the correct location on your computer.
-    * Power BI will run the script and show a Navigator with all the DataFrames created. Select the **final dataset** that includes your predictions.
-3.  **Build the Dashboard:**
-    * Load the data into Power BI.
-    * Recreate the dashboard from the project document. It should include:
-        * A scatter plot of `MonthlySalary` vs. `Openess_to_experience`, colored by cluster.
-        * Pie charts showing the distribution of employees across clusters and predicted groups.
-        * Bar charts showing employee counts by designation.
-        * A table with detailed employee information.
+Instead of using an external tool like Power BI, you can create all the necessary visualizations directly within your Python script or Jupyter Notebook using libraries like `matplotlib`, `plotly` and `seaborn`.
+
+1.  **Scatter Plot of Clusters:**
+    * This plot helps you visualize the different employee clusters based on their monthly salary and openness to experience.
+    * Use the `scatterplot` function from `seaborn`.
+
+    ```python
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    # Set the figure size for better readability
+    plt.figure(figsize=(10, 6))
+
+    # Create the scatter plot
+    sns.scatterplot(
+        x='MonthlySalary',
+        y='Openess_to_experience',
+        hue='means_cluster',  # Color points by their cluster
+        palette='viridis',     # Choose a color scheme
+        data=dataset_final,    # Use your final dataframe
+        s=100,                 # Set marker size
+        alpha=0.7              # Set marker transparency
+    )
+
+    plt.title('Employee Clusters based on Salary and Openness')
+    plt.xlabel('Monthly Salary')
+    plt.ylabel('Openness to Experience')
+    plt.legend(title='Cluster')
+    plt.show()
+    ```
+
+2.  **Bar Chart of Employee Designations:**
+    * This chart shows the number of employees in each job designation.
+
+    ```python
+    plt.figure(figsize=(12, 7))
+
+    # Create the count plot
+    sns.countplot(y='Designation', data=dataset_final, order = dataset_final['Designation'].value_counts().index)
+
+    plt.title('Number of Employees by Designation')
+    plt.xlabel('Count')
+    plt.ylabel('Designation')
+    plt.show()
+    ```
+
+3.  **Pie Charts for Cluster Distribution:**
+    * These charts show the percentage of employees in each cluster, both for the original K-Means clusters and the model's predictions.
+
+    ```python
+    # Create a figure with two subplots (side-by-side)
+    fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+
+    # Pie chart for original K-Means clusters
+    cluster_counts = dataset_final['means_cluster'].value_counts()
+    axes[0].pie(cluster_counts, labels=cluster_counts.index, autopct='%1.1f%%', startangle=90)
+    axes[0].set_title('Distribution of Original K-Means Clusters')
+
+    # Pie chart for predicted clusters
+    predicted_counts = dataset_final['Predicted'].value_counts()
+    axes[1].pie(predicted_counts, labels=predicted_counts.index, autopct='%1.1f%%', startangle=90)
+    axes[1].set_title('Distribution of Predicted Clusters')
+
+    plt.show()
+    
